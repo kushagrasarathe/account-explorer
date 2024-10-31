@@ -1,0 +1,1 @@
+export const WALLET_TX_HISTORY = 'WALLET_TX_HISTORY';
