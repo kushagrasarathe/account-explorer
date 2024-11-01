@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, QrCode, Search, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { isAddress } from 'viem';
@@ -162,9 +163,13 @@ function ResolvedAddressDropdown({
   inputValue: string;
   isLoading: boolean;
 }) {
+  const router = useRouter();
   return (
     <Card className="absolute top-14 w-full rounded-lg border p-1.5 shadow-lg">
-      <CardContent className="flex cursor-pointer flex-col items-start px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/10">
+      <CardContent
+        onClick={() => router.push(`/address/${resolvedAddress?.address}`)}
+        className="flex cursor-pointer flex-col items-start px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/10"
+      >
         {isLoading ? (
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Loader2 className="size-4 animate-spin" />

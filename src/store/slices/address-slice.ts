@@ -8,8 +8,8 @@ export interface AddressSlice {
 
 export const createAddressSlice: StateCreator<AddressSlice> = (set) => ({
   currentAddress: null,
-  setAddress: (currentAddress) =>
+  setAddress: (address) =>
     set(() => ({
-      currentAddress: { currentAddress },
+      currentAddress: { currentAddress: address },
     })),
 });
