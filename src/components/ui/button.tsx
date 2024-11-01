@@ -1,14 +1,22 @@
-import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300 rounded-md  transition-all duration-300',
   {
     variants: {
       variant: {
+        'reown-1':
+          'bg-reown-1 text-reown-foreground hover:bg-reown-1/90 hover:rounded-2xl rounded-lg',
+        'reown-2':
+          'bg-reown-2 text-white hover:bg-reown-2/90 hover:rounded-2xl rounded-lg',
+        'reown-3':
+          'bg-reown-3 text-reown-foreground hover:bg-reown-3/90 hover:rounded-2xl rounded-lg',
+        'reown-4':
+          'bg-reown-4 text-white hover:bg-reown-4/90 hover:rounded-2xl rounded-lg',
         default:
           'bg-neutral-900 text-neutral-50 hover:bg-neutral-900/90 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90',
         destructive:
@@ -23,8 +31,8 @@ const buttonVariants = cva(
       },
       size: {
         default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
+        sm: 'h-9 px-3',
+        lg: 'h-11 px-8',
         icon: 'h-10 w-10',
       },
     },

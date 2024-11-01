@@ -1,6 +1,6 @@
 'use client';
 
-import { useExplorerStore } from '@/store/useExplorerStore';
+import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { useParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 import AddressWrapper from './address-wrapper';
@@ -13,7 +13,7 @@ export default function AddressLayout({
 
   useEffect(() => {
     setCurrentAddress(address as string);
-  }, [address, setCurrentAddress]);
+  }, [address]);
 
   return <AddressWrapper>{children}</AddressWrapper>;
 }

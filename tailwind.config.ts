@@ -12,6 +12,13 @@ const config: Config = {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
+        reown: {
+          1: '#e9e9e9',
+          2: '#ff573b',
+          3: '#ffb800',
+          4: '#0988f0',
+          foreground: '#202020',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

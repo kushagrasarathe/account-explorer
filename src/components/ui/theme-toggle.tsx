@@ -20,7 +20,7 @@ export function ThemeToggle() {
     <ButtonIcon
       onClick={handleThemeChange}
       icon={theme === 'dark' ? Sun : Moon}
-      variant={'ghost'}
+      variant={'reown-2'}
     >
       <span className="sr-only">Toggle theme</span>
     </ButtonIcon>

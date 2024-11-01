@@ -23,7 +23,7 @@ export function Pagination({
   return (
     <div className="flex items-center justify-center gap-2 px-2 py-4">
       <Button
-        variant="outline"
+        variant="reown-2"
         size="sm"
         onClick={() => onPageChange(1)}
         disabled={currentPage === 1}
@@ -33,7 +33,7 @@ export function Pagination({
       </Button>
 
       <Button
-        variant="outline"
+        variant="reown-3"
         size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
@@ -47,7 +47,7 @@ export function Pagination({
       </Typography>
 
       <Button
-        variant="outline"
+        variant="reown-3"
         size="sm"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
@@ -57,7 +57,7 @@ export function Pagination({
       </Button>
 
       <Button
-        variant="outline"
+        variant="reown-2"
         size="sm"
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}

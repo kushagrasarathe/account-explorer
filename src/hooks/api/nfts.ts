@@ -1,6 +1,6 @@
 import axios from '@/config/axios';
 import { WALLET_NFT_HOLDINGS } from '@/lib/constants';
-import { useExplorerStore } from '@/store/useExplorerStore';
+import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { GetWalletNFTsJSONResponse } from 'moralis/common-evm-utils';

@@ -1,5 +1,7 @@
 import {
+  EvmNetWorthResultJSON,
   EvmWalletHistoryJSON,
+  EvmWalletStatJSON,
   GetWalletNFTsJSONResponse,
 } from 'moralis/common-evm-utils';
 import { create } from 'zustand';
@@ -11,6 +13,10 @@ interface IExplorerStore {
   setTransactions: (transactions: EvmWalletHistoryJSON) => void;
   nftHoldings: GetWalletNFTsJSONResponse | null;
   setNFTHoldings: (nftHoldings: GetWalletNFTsJSONResponse) => void;
+  walletNetWorth: EvmNetWorthResultJSON | null;
+  setNetWorth: (balance: EvmNetWorthResultJSON) => void;
+  walletStats: EvmWalletStatJSON | null;
+  setWalletStats: (walletStats: EvmWalletStatJSON) => void;
 }
 
 export const useExplorerStore = create<IExplorerStore>((set, get) => ({
@@ -35,6 +41,22 @@ export const useExplorerStore = create<IExplorerStore>((set, get) => ({
     set((state) => ({
       ...state,
       nftHoldings: nftHoldings,
+    }));
+  },
+
+  walletNetWorth: null,
+  setNetWorth: (walletNetWorth: EvmNetWorthResultJSON) => {
+    set((state) => ({
+      ...state,
+      walletNetWorth: walletNetWorth,
+    }));
+  },
+
+  walletStats: null,
+  setWalletStats: (walletStats: EvmWalletStatJSON) => {
+    set((state) => ({
+      ...state,
+      wallettStats: walletStats,
     }));
   },
 }));

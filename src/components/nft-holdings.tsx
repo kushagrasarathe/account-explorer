@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { useExplorerStore } from '@/store/useExplorerStore';
+import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { Addreth } from 'addreth';
 import { GetWalletNFTsJSONResponse } from 'moralis/common-evm-utils';
 import Image from 'next/image';
@@ -60,7 +60,7 @@ export default function NFTHoldings() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-12 gap-5 *:col-span-full md:*:col-span-4">
+      <div className="grid grid-cols-12 items-stretch gap-5 *:col-span-full md:*:col-span-4">
         {currentItems.map((nft) => (
           <NFTCard key={`${nft.token_address}-${nft.token_id}`} {...nft} />
         ))}
