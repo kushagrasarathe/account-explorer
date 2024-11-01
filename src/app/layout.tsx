@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(font.className, 'bg-background antialiased')}>
+      <body className={cn(font.className, 'bg-background')}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
