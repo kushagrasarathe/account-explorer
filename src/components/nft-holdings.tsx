@@ -1,9 +1,11 @@
 'use client';
-import { cn, parseNftMetadata } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useExplorerStore } from '@/store/useExplorerStore';
 import { Addreth } from 'addreth';
 import { GetWalletNFTsJSONResponse } from 'moralis/common-evm-utils';
 import Image from 'next/image';
+import { useMemo, useState } from 'react';
+import { Pagination } from './pagination';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { Typography } from './ui/typography';
@@ -26,19 +28,55 @@ type NFTCardProps = Pick<
 
 export default function NFTHoldings() {
   const { nftHoldings } = useExplorerStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
+
+  const { currentItems, totalPages } = useMemo(() => {
+    if (!nftHoldings?.result) {
+      return { currentItems: [], totalPages: 0 };
+    }
+
+    const totalItems = nftHoldings.result.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentItems = nftHoldings.result.slice(startIndex, endIndex);
+
+    return { currentItems, totalPages };
+  }, [nftHoldings?.result, currentPage, pageSize]);
+
+  if (!nftHoldings?.result?.length) {
+    return (
+      <Typography variant="large" className="text-center">
+        No NFTs found
+      </Typography>
+    );
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <div className="grid grid-cols-12 gap-5 *:col-span-full md:*:col-span-4">
-      {nftHoldings?.result.map((nft) => (
-        <NFTCard key={nft.token_address} {...nft} />
-      ))}
+    <div className="space-y-6">
+      <div className="grid grid-cols-12 gap-5 *:col-span-full md:*:col-span-4">
+        {currentItems.map((nft) => (
+          <NFTCard key={`${nft.token_address}-${nft.token_id}`} {...nft} />
+        ))}
+      </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }
 
 const NFTCard = (nft: NFTCardProps) => {
-  const metadata = parseNftMetadata(nft.metadata as string);
-  console.log(metadata?.image_url);
-
   return (
     <Card className="group mx-auto w-full max-w-sm transform cursor-pointer space-y-4 overflow-hidden rounded-lg p-4 shadow-lg transition-all duration-300 hover:shadow-xl">
       <div className="flex w-full items-center justify-between gap-3">
