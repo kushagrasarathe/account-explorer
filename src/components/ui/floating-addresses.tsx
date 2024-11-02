@@ -136,7 +136,7 @@ const FloatingAddresses = () => {
               scale: 1.05,
               transition: { duration: 0.2 },
             }}
-            className="absolute cursor-pointer whitespace-nowrap rounded-xl border px-6 py-2 text-black/80 transition-all duration-300 hover:z-[1000] hover:border-2 hover:border-reown-2/40 hover:bg-reown-2/50 hover:text-reown-2 hover:shadow-lg dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-900"
+            className="absolute cursor-pointer select-none whitespace-nowrap rounded-xl border px-6 py-2 text-black/80 transition-all duration-300 hover:z-[1000] hover:border-2 hover:border-reown-2/40 hover:bg-reown-2/50 hover:text-reown-2 hover:shadow-lg dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-900"
           >
             <Typography variant={'smallTitle'}>{item.address}</Typography>
           </motion.div>

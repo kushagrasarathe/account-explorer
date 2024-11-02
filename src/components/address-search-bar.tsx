@@ -5,9 +5,10 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
+import { formatAddress } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Avatar from 'boring-avatars';
-import { Clock, Loader2, QrCode, Search, X } from 'lucide-react';
+import { Clock, Loader2, Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -15,6 +16,7 @@ import { isAddress } from 'viem';
 import { normalize } from 'viem/ens';
 import { useEnsAddress, useEnsResolver } from 'wagmi';
 import { z } from 'zod';
+import ScanQr from './scan-qr';
 import { ButtonIcon } from './ui/button-icon';
 import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
@@ -191,7 +193,7 @@ export default function AddressSearchBar() {
                           }
                         }}
                         placeholder="e.g: kushagrasarathe.eth"
-                        className="h-12 w-full rounded-full border p-3 pl-10 pr-12 tracking-wide text-reown-foreground focus:ring-2 dark:text-reown-1"
+                        className="h-12 w-full rounded-full border p-3 pl-10 pr-12 tracking-wide text-reown-foreground focus:ring-2 dark:bg-[#222222] dark:text-reown-1"
                       />
                       <Search
                         className="absolute left-3 top-1/2 text-gray-400 -translate-y-1/2"
@@ -209,12 +211,8 @@ export default function AddressSearchBar() {
                           className="absolute right-14 top-1/2 h-7 p-0 text-gray-400 -translate-y-1/2 hover:bg-white hover:text-gray-600"
                         />
                       )}
-                      <ButtonIcon
-                        variant="secondary"
-                        icon={QrCode}
-                        type="button"
-                        className="absolute right-3 top-1/2 h-7 p-2 text-gray-400 -translate-y-1/2 hover:text-gray-600"
-                      />
+
+                      <ScanQr />
                       {showDropdown && (
                         <ResolvedAddressDropdown
                           resolvedAddress={resolvedAddress}
@@ -252,8 +250,11 @@ function SearchHistoryDropdown({
   onItemClick: (item: SearchHistoryItem) => void;
 }) {
   return (
-    <Card className="absolute top-14 w-full rounded-lg border p-1.5 shadow-lg">
-      <Typography variant="small" className="px-3 py-2 text-gray-500">
+    <Card className="absolute top-14 w-full rounded-lg border p-1.5 shadow-lg dark:bg-[#222222]">
+      <Typography
+        variant="small"
+        className="px-3 py-2 text-gray-500 dark:text-gray-300"
+      >
         Recent searches
       </Typography>
       {history.map((item) => (
@@ -330,9 +331,15 @@ const AddressCard = ({ address, ens }: { address: string; ens?: string }) => {
         )}
         <Typography
           variant="small"
-          className="block font-mono font-medium tracking-wide text-gray-600 dark:text-gray-300"
+          className="hidden font-mono font-medium tracking-wide text-gray-600 dark:text-gray-300 md:block"
         >
           {address}
+        </Typography>
+        <Typography
+          variant="small"
+          className="block font-mono font-medium tracking-wide text-gray-600 dark:text-gray-300 md:hidden"
+        >
+          {formatAddress(address)}
         </Typography>
       </div>
     </div>

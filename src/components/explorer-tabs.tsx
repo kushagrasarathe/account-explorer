@@ -31,7 +31,7 @@ export const tabsData: TTabsData = [
 export default function ExplorerTabs() {
   return (
     <Tabs defaultValue={'transactions'} className="space-y-6">
-      <TabsList className="flex w-max max-w-[300px] justify-start overflow-auto md:max-w-fit">
+      <TabsList className="flex w-max max-w-[95%] justify-start overflow-auto md:max-w-fit">
         {tabsData.map((tab, idx) => (
           <TabsTrigger key={idx} value={tab.tabValue}>
             {tab.title}
