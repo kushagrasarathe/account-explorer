@@ -77,7 +77,6 @@ export const useWalletNetWorthQuery = (address: string, dependsOn = true) => {
 
 export const useWalletStatsQuery = (address: string, dependsOn = true) => {
   const { setWalletStats } = useExplorerStore();
-
   const fetchWalletStats = async () => {
     const { data } = await axios.get<EvmWalletStatJSON>(
       `/wallets/${address}/stats`
@@ -85,7 +84,9 @@ export const useWalletStatsQuery = (address: string, dependsOn = true) => {
     return data;
   };
 
-  function onSuccess(resp?: EvmWalletStatJSON) {}
+  function onSuccess(resp?: EvmWalletStatJSON) {
+    setWalletStats(resp as EvmWalletStatJSON);
+  }
 
   function onError(error: AxiosError) {}
 

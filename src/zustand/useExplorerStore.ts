@@ -16,12 +16,13 @@ interface IExplorerStore {
   setNFTHoldings: (nftHoldings: GetWalletNFTsJSONResponse) => void;
   walletNetWorth: EvmNetWorthResultJSON | null;
   setNetWorth: (balance: EvmNetWorthResultJSON) => void;
-  walletStats: EvmWalletStatJSON | null;
-  setWalletStats: (walletStats: EvmWalletStatJSON) => void;
   tokenHoldings: EvmErc20TokenBalanceWithPriceResultJSON | null;
   setTokenHoldings: (
     tokenHoldings: EvmErc20TokenBalanceWithPriceResultJSON
   ) => void;
+
+  walletStats: EvmWalletStatJSON | null;
+  setWalletStats: (walletStats: EvmWalletStatJSON) => void;
 }
 
 export const useExplorerStore = create<IExplorerStore>((set, get) => ({
@@ -61,7 +62,7 @@ export const useExplorerStore = create<IExplorerStore>((set, get) => ({
   setWalletStats: (walletStats: EvmWalletStatJSON) => {
     set((state) => ({
       ...state,
-      wallettStats: walletStats,
+      walletStats: walletStats,
     }));
   },
 

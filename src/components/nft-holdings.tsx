@@ -1,9 +1,7 @@
 'use client';
 import { useNFTHoldingsQuery } from '@/hooks/api/nfts';
-import { constNFTHoldingsData } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { useExplorerStore } from '@/zustand/useExplorerStore';
-import { Addreth } from 'addreth';
 import { GetWalletNFTsJSONResponse } from 'moralis/common-evm-utils';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
@@ -32,45 +30,29 @@ type NFTCardProps = Pick<
 export default function NFTHoldings() {
   const { nftHoldings, currentAddress } = useExplorerStore();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(6);
+  const [pageSize] = useState(6);
 
   const triggerNFTQuery = !!currentAddress && !nftHoldings;
 
   const { data: nftHoldingsData, isFetching: isFetchingWalletNFTs } =
-    useNFTHoldingsQuery(
-      currentAddress as string,
-      // triggerNFTQuery,
-      false
-    );
-
-  if (!constNFTHoldingsData?.result?.length) {
-    return (
-      <Typography variant="large" className="text-center">
-        No NFTs found
-      </Typography>
-    );
-  }
+    useNFTHoldingsQuery(currentAddress as string, triggerNFTQuery);
 
   const { currentItems, totalPages } = useMemo(() => {
-    if (!constNFTHoldingsData?.result) {
+    if (!nftHoldings?.result) {
       return { currentItems: [], totalPages: 0 };
     }
 
-    const totalItems = constNFTHoldingsData.result.length || 0;
+    const totalItems = nftHoldings.result.length || 0;
     const totalPages = Math.ceil(totalItems / pageSize);
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const currentItems = constNFTHoldingsData.result.slice(
-      startIndex,
-      endIndex
-    );
+    const currentItems = nftHoldings.result.slice(startIndex, endIndex);
 
     return { currentItems, totalPages };
   }, [nftHoldings?.result, currentPage, pageSize]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (!!isFetchingWalletNFTs) {
@@ -83,15 +65,19 @@ export default function NFTHoldings() {
     );
   }
 
+  if (!nftHoldings?.result?.length) {
+    return (
+      <Typography variant="large" className="text-center">
+        No NFTs found
+      </Typography>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-12 items-stretch gap-5 *:col-span-full md:*:col-span-4">
         {currentItems.map((nft) => (
-          <NFTCard
-            key={`${nft.token_address}-${nft.token_id}`}
-            {...nft}
-            rarity_label={nft.rarity_label || undefined}
-          />
+          <NFTCard key={`${nft.token_address}-${nft.token_id}`} {...nft} />
         ))}
       </div>
 
@@ -104,7 +90,6 @@ export default function NFTHoldings() {
     </div>
   );
 }
-
 const NFTCard = (nft: NFTCardProps) => {
   return (
     <Card className="group mx-auto w-full max-w-sm cursor-pointer space-y-4 overflow-hidden rounded-lg p-4 shadow-lg transition-all duration-300 transform hover:shadow-xl dark:border-white/20 dark:bg-[#222222]">
@@ -133,7 +118,7 @@ const NFTCard = (nft: NFTCardProps) => {
         <Typography
           variant={'small'}
           className={cn(
-            'absolute bottom-2 right-2 rounded bg-reown-3 px-2 py-1 text-xs text-black group-hover:z-30'
+            'absolute bottom-2 left-2 rounded bg-reown-3 px-2 py-1 text-xs text-black group-hover:z-30'
           )}
         >
           {!!nft.rarity_label
@@ -142,25 +127,6 @@ const NFTCard = (nft: NFTCardProps) => {
         </Typography>
       </div>
 
-      <div className="space-y-2">
-        <Typography variant={'small'} className="block">
-          Token ID:
-        </Typography>
-        <Addreth address={nft.token_id as `0x${string}`} actions="copy" />
-      </div>
-
-      <div className="space-y-2">
-        <Typography variant={'small'} className="block">
-          Contract Address:{' '}
-        </Typography>
-        <Addreth address={nft.token_address as `0x${string}`} actions="copy" />
-      </div>
-      <div className="space-y-2">
-        <Typography variant={'small'} className="block">
-          Owner:{' '}
-        </Typography>
-        <Addreth address={nft.owner_of as `0x${string}`} actions="copy" />
-      </div>
       {!!nft.rarity_label && (
         <Typography className="absolute -bottom-20 -right-10 text-[140px] opacity-50 transition delay-150 -rotate-45 group-hover:opacity-70">
           💎

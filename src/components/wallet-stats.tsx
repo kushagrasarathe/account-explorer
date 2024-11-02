@@ -4,7 +4,7 @@ import {
   useWalletNetWorthQuery,
   useWalletStatsQuery,
 } from '@/hooks/api/wallet';
-import { netWorthData, statsData } from '@/lib/mock-data';
+// import { netWorthData, statsData } from '@/lib/mock-data';
 import { formatAddress, formatNumber } from '@/lib/utils';
 import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { CopyToClipboard } from './copy-to-clipboard';
@@ -12,7 +12,7 @@ import QrCodeGenerator from './qr-generator';
 import { Typography } from './ui/typography';
 
 export default function WalletStats() {
-  const { currentAddress, walletNetWorth, walletStats } = useExplorerStore();
+  const { walletNetWorth, walletStats } = useExplorerStore();
 
   return (
     <>
@@ -21,8 +21,8 @@ export default function WalletStats() {
         <div className="flex flex-col items-stretch justify-center gap-5 md:flex-row md:gap-10">
           <Stats />
           <QrCodeGenerator
-            nftsOwned={statsData.nfts}
-            totalTransactions={statsData.transactions.total}
+            nftsOwned={walletStats?.nfts || '---'}
+            totalTransactions={walletStats?.transactions.total || '---'}
             netWorth={walletNetWorth?.total_networth_usd as string}
           />
         </div>
@@ -33,22 +33,18 @@ export default function WalletStats() {
 
 const Stats = () => {
   const { currentAddress, walletNetWorth, walletStats } = useExplorerStore();
+  console.log('walletStats', walletStats);
 
   const triggerNetWorthQuery = !!currentAddress && !walletNetWorth;
   const triggerStatsQuery = !!currentAddress && !walletStats;
 
   const { isLoading } = useWalletNetWorthQuery(
     currentAddress as string,
-    // triggerNetWorthQuery
-    false
+    triggerNetWorthQuery
   );
 
   const { data: walletStatsData, isLoading: isLoadingWalletStats } =
-    useWalletStatsQuery(
-      currentAddress as string,
-      // triggerStatsQuery
-      false
-    );
+    useWalletStatsQuery(currentAddress as string, triggerStatsQuery);
 
   return (
     <div className="grid w-full grid-cols-2 items-stretch gap-0 rounded-2xl shadow-md *:col-span-full md:*:col-span-1">
@@ -88,10 +84,10 @@ const Stats = () => {
               variant="smallTitle"
               className="block font-mono text-black"
             >
-              {formatNumber(netWorthData?.total_networth_usd as string)}
+              {formatNumber(walletNetWorth?.total_networth_usd as string)}
             </Typography>
             <CopyToClipboard
-              text={netWorthData?.total_networth_usd as string}
+              text={walletNetWorth?.total_networth_usd as string}
             />
           </div>
         )}
@@ -110,7 +106,7 @@ const Stats = () => {
             variant="smallTitle"
             className="block font-mono text-black"
           >
-            {statsData?.transactions.total || 0}
+            {walletStats?.transactions.total || 0}
           </Typography>
         )}
       </div>
@@ -128,7 +124,7 @@ const Stats = () => {
             variant="smallTitle"
             className="mx-auto block w-fit font-mono text-black"
           >
-            {statsData?.nfts || 0}
+            {walletStats?.nfts || 0}
           </Typography>
         )}
       </div>

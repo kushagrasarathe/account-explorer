@@ -9,7 +9,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useWalletTxHistoryQuery } from '@/hooks/api/wallet';
-import { transactionHistoryData } from '@/lib/mock-data';
 import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { Addreth } from 'addreth';
 import { useState } from 'react';
@@ -28,13 +27,13 @@ export default function TransactionHistoryTable() {
   const triggerTxsQuery = !!currentAddress && !transactions;
 
   const { data: walletTxns, isFetching: isFetchingWalletTxns } =
-    useWalletTxHistoryQuery(
-      currentAddress as string,
-      // triggerTxsQuery,
-      false
-    );
+    useWalletTxHistoryQuery(currentAddress as string, triggerTxsQuery);
 
-  if (!transactionHistoryData?.result.length) {
+  if (!!isFetchingWalletTxns) {
+    return <TableSkeletonLoading columns={columns} />;
+  }
+
+  if (!transactions?.result.length) {
     return (
       <Table>
         <TableHeader>
@@ -49,22 +48,15 @@ export default function TransactionHistoryTable() {
     );
   }
 
-  const totalItems = transactionHistoryData.result.length;
+  const totalItems = transactions.result.length;
   const totalPages = Math.ceil(totalItems / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, totalItems);
-  const currentItems = transactionHistoryData.result.slice(
-    startIndex,
-    endIndex
-  );
+  const currentItems = transactions.result.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
-  if (!!isFetchingWalletTxns) {
-    return <TableSkeletonLoading columns={columns} />;
-  }
 
   return (
     <div className="space-y-4">

@@ -56,7 +56,8 @@ export default function ScanQr() {
       setError('Could not access camera. Please check permissions.');
     }
   };
-  const handleSuccessfulScan = (address: string) => {
+  const handleSuccessfulScan = (url: string) => {
+    const address = url.split('/').pop();
     stopScanning();
     setOpen(false);
     router.push(`/address/${address}`);

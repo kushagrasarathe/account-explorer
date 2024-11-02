@@ -37,13 +37,12 @@ function QrCodeGenerator({
   netWorth,
   totalTransactions,
 }: QrCodeGeneratorProps) {
-  const qrCodeRef = useRef<HTMLDivElement>(null);
   const { address } = useParams();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="w-full space-y-4 md:w-fit">
-      <div className="space-y-4" ref={qrCodeRef}>
+      <div className="space-y-4">
         <Card className="rounded-2xl bg-reown-1 p-4 shadow-xl dark:bg-[#222222] lg:size-fit">
           <QRCode
             value={getCurrentURL()}
@@ -121,7 +120,7 @@ function ShareableCard({
     <div className="space-y-6">
       <Card
         ref={cardRef}
-        className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-xl dark:bg-[#222222]"
+        className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-xl dark:bg-white"
       >
         <DotPattern
           className={cn(
@@ -136,7 +135,10 @@ function ShareableCard({
 
         <div className="relative space-y-6">
           <CardHeader className="space-y-2 p-0">
-            <Typography variant="h3" className="text-center font-bold">
+            <Typography
+              variant="h3"
+              className="text-center font-bold dark:text-black"
+            >
               Ethereum Address
             </Typography>
             {ensName && (
@@ -154,12 +156,12 @@ function ShareableCard({
               <QRCode value={getCurrentURL()} className="size-40" />
             </div>
 
-            <div className="w-full space-y-3 rounded-xl bg-reown-3 p-4 dark:bg-gray-800">
+            <div className="w-full space-y-3 rounded-xl bg-reown-3 p-4">
               <div className="flex justify-between">
                 <Typography variant="small" className="text-gray-800">
                   Address
                 </Typography>
-                <Typography variant="small" className="font-mono">
+                <Typography variant="small" className="font-mono text-gray-800">
                   {formatAddress(address)}
                 </Typography>
               </div>
@@ -167,7 +169,7 @@ function ShareableCard({
                 <Typography variant="small" className="text-gray-800">
                   Balance
                 </Typography>
-                <Typography variant="small" className="font-mono">
+                <Typography variant="small" className="font-mono text-gray-800">
                   {formattedBalance} ETH
                 </Typography>
               </div>
@@ -176,7 +178,10 @@ function ShareableCard({
                   <Typography variant="small" className="text-gray-800">
                     Net Worth
                   </Typography>
-                  <Typography variant="small" className="font-mono">
+                  <Typography
+                    variant="small"
+                    className="font-mono text-gray-800"
+                  >
                     {netWorth}
                   </Typography>
                 </div>
@@ -187,7 +192,10 @@ function ShareableCard({
                   <Typography variant="small" className="text-gray-800">
                     Transactions
                   </Typography>
-                  <Typography variant="small" className="font-mono">
+                  <Typography
+                    variant="small"
+                    className="font-mono text-gray-800"
+                  >
                     {totalTransactions}
                   </Typography>
                 </div>
@@ -198,7 +206,10 @@ function ShareableCard({
                   <Typography variant="small" className="text-gray-800">
                     NFTs Owned
                   </Typography>
-                  <Typography variant="small" className="font-mono">
+                  <Typography
+                    variant="small"
+                    className="font-mono text-gray-800"
+                  >
                     {nftsOwned}
                   </Typography>
                 </div>

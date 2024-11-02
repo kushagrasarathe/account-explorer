@@ -9,7 +9,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useWalletTokenHoldingsQuery } from '@/hooks/api/wallet';
-import { tokenHoldingsDataMock } from '@/lib/mock-data';
 import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { useState } from 'react';
 import { Pagination } from './pagination';
@@ -35,11 +34,14 @@ export default function TokenHoldingsTable() {
   const { data: tokenHoldingsData, isFetching: isFetchingTokenHHoldings } =
     useWalletTokenHoldingsQuery(
       currentAddress as string,
-      // triggerTokenHoldingsQuery
-      false
+      triggerTokenHoldingsQuery
     );
 
-  if (!tokenHoldingsDataMock?.result.length) {
+  if (!!isFetchingTokenHHoldings) {
+    return <TableSkeletonLoading columns={columns} />;
+  }
+
+  if (!tokenHoldings?.result.length) {
     return (
       <Table>
         <TableHeader>
@@ -54,19 +56,15 @@ export default function TokenHoldingsTable() {
     );
   }
 
-  const totalItems = tokenHoldingsDataMock.result.length;
+  const totalItems = tokenHoldings.result.length;
   const totalPages = Math.ceil(totalItems / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, totalItems);
-  const currentItems = tokenHoldingsDataMock.result.slice(startIndex, endIndex);
+  const currentItems = tokenHoldings.result.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
-  if (!!isFetchingTokenHHoldings) {
-    return <TableSkeletonLoading columns={columns} />;
-  }
 
   return (
     <div className="space-y-4">
@@ -115,7 +113,9 @@ export default function TokenHoldingsTable() {
                 <TableCell>
                   {Number(asset.balance_formatted).toFixed(3)}
                 </TableCell>
-                <TableCell>{asset.usd_price?.toFixed(2) || '-'}</TableCell>
+                <TableCell>
+                  {Number(asset.usd_price)?.toFixed(2) || '-'}
+                </TableCell>
                 <TableCell>{asset.usd_value?.toFixed(2) || '-'}</TableCell>
                 <TableCell>{asset.portfolio_percentage?.toFixed(2)}</TableCell>
               </TableRow>

@@ -3,11 +3,8 @@ import Provider from '@/components/provider';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
-// import { Raleway } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
-
-// const font = Raleway({ subsets: ['latin'] });
 
 const khTekaRegular = localFont({
   src: './fonts/KHTeka-Regular.woff2',
@@ -37,7 +34,7 @@ export default function RootLayout({
         className={cn(
           khTekaRegular.variable,
           khTekaMono.variable,
-          'bg-white dark:bg-[#111111]'
+          'bg-white font-[family-name:var(--font-teka-sans)] dark:bg-[#111111]'
         )}
       >
         <ThemeProvider
