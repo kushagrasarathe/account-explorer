@@ -7,10 +7,8 @@ import Image from 'next/image';
 export default function Home() {
   return (
     <>
-      {/* rounded-[40px] bg-[#222222] */}
       <div className="relative z-50 flex min-h-[90dvh] items-center justify-center">
         <FloatingAddresses />
-        {/* <div className="relative z-50 my-5 flex items-center justify-center"> */}
         <div className="relative flex w-full items-center justify-center md:w-9/12">
           <Image
             src={'/overlay.png'}
@@ -23,10 +21,7 @@ export default function Home() {
             <AddressSearchBar />
           </div>
         </div>
-        {/* </div> */}
       </div>
     </>
   );
 }
-
-// [#ED8F45] [#FBF0F4]

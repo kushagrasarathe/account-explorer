@@ -18,7 +18,7 @@ function QrCodeGenerator() {
   return (
     <div className="space-y-4">
       <div className="space-y-4" ref={qrCodeRef}>
-        <Card className="bg-reown-1 rounded-2xl p-4 shadow-xl lg:size-fit">
+        <Card className="rounded-2xl bg-reown-1 p-4 shadow-xl lg:size-fit">
           <QRCode
             value={getCurrentURL()}
             className="size-full dark:invert lg:size-40"

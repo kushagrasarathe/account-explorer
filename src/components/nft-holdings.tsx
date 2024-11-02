@@ -121,15 +121,19 @@ const NFTCard = (nft: NFTCardProps) => {
       </div>
 
       <div className="relative">
-        <img
-          src={nft.collection_logo}
-          alt={nft.name}
-          className="h-48 w-full rounded-lg border object-cover shadow-inner dark:border-white/20"
-        />
+        <div className="relative mx-auto h-auto w-full max-w-sm">
+          <img
+            src={nft.collection_logo}
+            alt={nft.name}
+            className="relative z-0 mx-auto h-48 w-full max-w-sm rounded-lg border object-cover shadow-inner dark:border-white/20"
+          />
+          <div className="absolute left-0 top-0 z-10 h-full w-full rounded-lg bg-black opacity-0 transition-opacity duration-300 group-hover:opacity-40" />
+        </div>
+
         <Typography
-          variant={'large'}
+          variant={'small'}
           className={cn(
-            'absolute bottom-2 right-2 rounded bg-opacity-60 px-2 py-1 text-xs text-white'
+            'absolute bottom-2 right-2 rounded bg-reown-3 px-2 py-1 text-xs text-black group-hover:z-30'
           )}
         >
           {!!nft.rarity_label

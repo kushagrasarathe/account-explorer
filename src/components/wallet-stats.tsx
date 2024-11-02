@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  useWalletNetWorthQuery,
+  useWalletStatsQuery,
+} from '@/hooks/api/wallet';
 import { netWorthData, statsData } from '@/lib/mock-data';
 import { formatAddress, formatNumber } from '@/lib/utils';
 import { useExplorerStore } from '@/zustand/useExplorerStore';
@@ -9,45 +13,12 @@ import QrCodeGenerator from './qr-generator';
 import { Typography } from './ui/typography';
 
 export default function WalletStats() {
-  const { currentAddress, walletNetWorth, walletStats } = useExplorerStore();
-
-  // const triggerNetWorthQuery = !!currentAddress && !walletNetWorth;
-  // const triggerStatsQuery = !!currentAddress && !walletStats;
-
-  // const { isLoading } = useWalletNetWorthQuery(
-  //   currentAddress as string,
-
-  //   // triggerNetWorthQuery
-  //   false
-  // );
-
-  // const { data: walletStatsData, isLoading: isLoadingWalletStats } =
-  //   useWalletStatsQuery(
-  //     currentAddress as string,
-  //     // triggerStatsQuery
-  //     false
-  //   );
-
   return (
     <>
-      <div className="flex w-full flex-col gap-6">
-        {/* <Avatar
-          name={currentAddress ?? 'kushagra.eth'}
-          variant="beam"
-          className="rounded-full shadow-xl"
-        /> */}
+      <div className="w-full space-y-3">
+        <Typography variant={'h3'}>Account Stats</Typography>
         <Stats />
       </div>
-      {/* <Card className="w-full space-y-4 rounded-none border-0 p-0 shadow-none">
-        <CardContent className="flex flex-col-reverse justify-between gap-6 overflow-hidden rounded-none p-0 shadow-none lg:flex-row lg:items-stretch">
-          <div className="mt-[420px] w-full lg:mt-0">
-            <Stats />
-          </div>
-          <div className="w-full lg:w-2/12">
-            <AvatarAndQR />
-          </div>
-        </CardContent>
-      </Card> */}
     </>
   );
 }
@@ -74,27 +45,24 @@ const AvatarAndQR = () => {
 const Stats = () => {
   const { currentAddress, walletNetWorth, walletStats } = useExplorerStore();
 
-  // const triggerNetWorthQuery = !!currentAddress && !walletNetWorth;
-  // const triggerStatsQuery = !!currentAddress && !walletStats;
+  const triggerNetWorthQuery = !!currentAddress && !walletNetWorth;
+  const triggerStatsQuery = !!currentAddress && !walletStats;
 
-  // const { isLoading } = useWalletNetWorthQuery(
-  //   currentAddress as string,
+  const { isLoading } = useWalletNetWorthQuery(
+    currentAddress as string,
+    // triggerNetWorthQuery
+    false
+  );
 
-  //   // triggerNetWorthQuery
-  //   false
-  // );
+  const { data: walletStatsData, isLoading: isLoadingWalletStats } =
+    useWalletStatsQuery(
+      currentAddress as string,
+      // triggerStatsQuery
+      false
+    );
 
-  // const { data: walletStatsData, isLoading: isLoadingWalletStats } =
-  //   useWalletStatsQuery(
-  //     currentAddress as string,
-  //     // triggerStatsQuery
-  //     false
-  //   );
-
-  const isLoading = false;
-  const isLoadingWalletStats = false;
   return (
-    <div className="grid w-full grid-cols-2 items-stretch gap-0 rounded-2xl shadow-xl *:col-span-full md:*:col-span-1">
+    <div className="grid w-full grid-cols-2 items-stretch gap-0 rounded-2xl shadow-md *:col-span-full md:*:col-span-1">
       <div className="h-24 w-full overflow-hidden rounded-t-2xl bg-reown-3 p-4 text-center md:rounded-t-none md:rounded-tl-2xl">
         <Typography variant="small" className="text-gray-700">
           Account:

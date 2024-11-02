@@ -114,9 +114,8 @@ export default function TransactionHistoryTable() {
                   />
                 </div>
               </TableCell>
-              {/* <TableCell>{formatUnits(BigInt(txn.value), 18)}</TableCell> */}
               <TableCell>{formatEther(BigInt(txn.value))}</TableCell>
-              <TableCell>{txn.transaction_fee}</TableCell>
+              <TableCell>{Number(txn.transaction_fee).toFixed(4)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

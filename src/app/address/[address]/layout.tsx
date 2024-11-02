@@ -3,7 +3,6 @@
 import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { useParams } from 'next/navigation';
 import React, { useEffect } from 'react';
-import AddressWrapper from './address-wrapper';
 
 export default function AddressLayout({
   children,
@@ -15,5 +14,5 @@ export default function AddressLayout({
     setCurrentAddress(address as string);
   }, [address]);
 
-  return <AddressWrapper>{children}</AddressWrapper>;
+  return children;
 }
