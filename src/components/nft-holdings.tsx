@@ -1,4 +1,6 @@
 'use client';
+import { useNFTHoldingsQuery } from '@/hooks/api/nfts';
+import { constNFTHoldingsData } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { Addreth } from 'addreth';
@@ -8,6 +10,7 @@ import { useMemo, useState } from 'react';
 import { Pagination } from './pagination';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
+import { Skeleton } from './ui/skeleton';
 import { Typography } from './ui/typography';
 
 type NFTCardProps = Pick<
@@ -27,25 +30,20 @@ type NFTCardProps = Pick<
 };
 
 export default function NFTHoldings() {
-  const { nftHoldings } = useExplorerStore();
+  const { nftHoldings, currentAddress } = useExplorerStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
 
-  const { currentItems, totalPages } = useMemo(() => {
-    if (!nftHoldings?.result) {
-      return { currentItems: [], totalPages: 0 };
-    }
+  const triggerNFTQuery = !!currentAddress && !nftHoldings;
 
-    const totalItems = nftHoldings.result.length;
-    const totalPages = Math.ceil(totalItems / pageSize);
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const currentItems = nftHoldings.result.slice(startIndex, endIndex);
+  const { data: nftHoldingsData, isFetching: isFetchingWalletNFTs } =
+    useNFTHoldingsQuery(
+      currentAddress as string,
+      // triggerNFTQuery,
+      false
+    );
 
-    return { currentItems, totalPages };
-  }, [nftHoldings?.result, currentPage, pageSize]);
-
-  if (!nftHoldings?.result?.length) {
+  if (!constNFTHoldingsData?.result?.length) {
     return (
       <Typography variant="large" className="text-center">
         No NFTs found
@@ -53,16 +51,47 @@ export default function NFTHoldings() {
     );
   }
 
+  const { currentItems, totalPages } = useMemo(() => {
+    if (!constNFTHoldingsData?.result) {
+      return { currentItems: [], totalPages: 0 };
+    }
+
+    const totalItems = constNFTHoldingsData.result.length || 0;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentItems = constNFTHoldingsData.result.slice(
+      startIndex,
+      endIndex
+    );
+
+    return { currentItems, totalPages };
+  }, [nftHoldings?.result, currentPage, pageSize]);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  if (!!isFetchingWalletNFTs) {
+    return (
+      <div className="grid grid-cols-12 items-stretch gap-5 *:col-span-full md:*:col-span-4">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Skeleton key={index} className="min-h-96 w-full" />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-12 items-stretch gap-5 *:col-span-full md:*:col-span-4">
         {currentItems.map((nft) => (
-          <NFTCard key={`${nft.token_address}-${nft.token_id}`} {...nft} />
+          <NFTCard
+            key={`${nft.token_address}-${nft.token_id}`}
+            {...nft}
+            rarity_label={nft.rarity_label || undefined}
+          />
         ))}
       </div>
 
@@ -78,7 +107,7 @@ export default function NFTHoldings() {
 
 const NFTCard = (nft: NFTCardProps) => {
   return (
-    <Card className="group mx-auto w-full max-w-sm transform cursor-pointer space-y-4 overflow-hidden rounded-lg p-4 shadow-lg transition-all duration-300 hover:shadow-xl">
+    <Card className="group mx-auto w-full max-w-sm cursor-pointer space-y-4 overflow-hidden rounded-lg p-4 shadow-lg transition-all duration-300 transform hover:shadow-xl dark:border-white/20 dark:bg-[#222222]">
       <div className="flex w-full items-center justify-between gap-3">
         <div className="flex w-full items-center gap-2">
           <img
@@ -95,7 +124,7 @@ const NFTCard = (nft: NFTCardProps) => {
         <img
           src={nft.collection_logo}
           alt={nft.name}
-          className="h-48 w-full rounded-lg border object-cover shadow-inner"
+          className="h-48 w-full rounded-lg border object-cover shadow-inner dark:border-white/20"
         />
         <Typography
           variant={'large'}
@@ -129,7 +158,7 @@ const NFTCard = (nft: NFTCardProps) => {
         <Addreth address={nft.owner_of as `0x${string}`} actions="copy" />
       </div>
       {!!nft.rarity_label && (
-        <Typography className="absolute -bottom-20 -right-10 -rotate-45 text-[140px] opacity-50 transition delay-150 group-hover:opacity-70">
+        <Typography className="absolute -bottom-20 -right-10 text-[140px] opacity-50 transition delay-150 -rotate-45 group-hover:opacity-70">
           💎
         </Typography>
       )}

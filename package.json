@@ -22,9 +22,11 @@
     "@tanstack/react-table": "^8.20.5",
     "addreth": "^3.0.1",
     "axios": "^1.7.7",
+    "boring-avatars": "^1.11.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
+    "framer-motion": "^11.11.11",
     "html-to-image": "^1.11.11",
     "lodash": "^4.17.21",
     "lucide-react": "^0.454.0",
@@ -58,6 +60,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
     "tailwindcss": "^3.4.1",
+    "tailwindcss-3d": "^1.0.7",
     "typescript": "^5"
   }
 }

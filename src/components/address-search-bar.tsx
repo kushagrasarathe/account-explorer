@@ -6,6 +6,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Avatar from 'boring-avatars';
 import { Loader2, QrCode, Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -81,15 +82,9 @@ export default function AddressSearchBar() {
 
   return (
     <div className="w-full space-y-2">
-      <header className="space-y-2">
-        <Typography variant={'h2'} className="text-3xl font-bold">
-          Ethereum Address Explorer
-        </Typography>
-        <Typography
-          variant={'paragraph'}
-          className="text-gray-600 dark:text-gray-300"
-        >
-          Explore transaction history and analytics for any Ethereum address
+      <header className="space-y-2 px-2">
+        <Typography variant={'h4'} className="font-bold">
+          Enter ETH address or ENS
         </Typography>
       </header>
 
@@ -107,8 +102,8 @@ export default function AddressSearchBar() {
                         type="text"
                         value={inputValue}
                         onChange={handleInputChange}
-                        placeholder="Enter ETH address or ENS domain"
-                        className="h-12 w-full rounded-full border p-3 pl-10 pr-12 tracking-wide focus:ring-2"
+                        placeholder="e.g: kushagrasarathe.eth"
+                        className="text-reown-foreground dark:text-reown-1 h-12 w-full rounded-full border p-3 pl-10 pr-12 tracking-wide focus:ring-2"
                       />
                       <Search
                         className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -177,9 +172,10 @@ function ResolvedAddressDropdown({
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <img
-              src={`https://effigy.im/a/${resolvedAddress?.address || inputValue}.png`}
-              className="size-10 rounded-full shadow-md"
+            <Avatar
+              name={(resolvedAddress?.address || inputValue) ?? 'kushagra.eth'}
+              variant="pixel"
+              className="size-10 rounded-full shadow-xl"
             />
             <div className="space-y-1">
               {resolvedAddress?.ens &&

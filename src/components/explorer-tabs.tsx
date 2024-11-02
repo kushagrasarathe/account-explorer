@@ -2,6 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ComponentType } from 'react';
 import NFTHoldings from './nft-holdings';
+import TokenHoldingsTable from './token-holdings';
 import TransactionHistoryTable from './transaction-history';
 
 type TTabsData = {
@@ -15,6 +16,11 @@ export const tabsData: TTabsData = [
     title: 'Transactions',
     tabValue: 'transactions',
     tabContent: TransactionHistoryTable,
+  },
+  {
+    title: 'Token Holdings',
+    tabValue: 'token-holdings',
+    tabContent: TokenHoldingsTable,
   },
   {
     title: 'NFT Holdings',

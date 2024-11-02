@@ -18,10 +18,13 @@ function QrCodeGenerator() {
   return (
     <div className="space-y-4">
       <div className="space-y-4" ref={qrCodeRef}>
-        <Card className="bg-reown-1 size-fit p-4 shadow-md">
-          <QRCode value={getCurrentURL()} className="size-40 dark:invert" />
+        <Card className="bg-reown-1 rounded-2xl p-4 shadow-xl lg:size-fit">
+          <QRCode
+            value={getCurrentURL()}
+            className="size-full dark:invert lg:size-40"
+          />
         </Card>
-        <ButtonIcon icon={Share2} variant={'reown-3'} className="w-full">
+        <ButtonIcon icon={Share2} variant={'reown-2'} className="w-full">
           Share
         </ButtonIcon>
       </div>

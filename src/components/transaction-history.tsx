@@ -8,21 +8,33 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useWalletTxHistoryQuery } from '@/hooks/api/wallet';
+import { transactionHistoryData } from '@/lib/mock-data';
 import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { Addreth } from 'addreth';
 import { useState } from 'react';
-import { formatUnits } from 'viem';
+import { formatEther } from 'viem';
 import { Pagination } from './pagination';
 import { Badge } from './ui/badge';
+import { TableSkeletonLoading } from './ui/table-loading';
 
 const columns = ['Txn hash', 'Method', 'Block', 'From/To', 'Value', 'Txn Fee'];
 
 export default function TransactionHistoryTable() {
-  const { transactions } = useExplorerStore();
+  const { transactions, currentAddress } = useExplorerStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
 
-  if (!transactions?.result.length) {
+  const triggerTxsQuery = !!currentAddress && !transactions;
+
+  const { data: walletTxns, isFetching: isFetchingWalletTxns } =
+    useWalletTxHistoryQuery(
+      currentAddress as string,
+      // triggerTxsQuery,
+      false
+    );
+
+  if (!transactionHistoryData?.result.length) {
     return (
       <Table>
         <TableHeader>
@@ -37,23 +49,33 @@ export default function TransactionHistoryTable() {
     );
   }
 
-  const totalItems = transactions.result.length;
+  const totalItems = transactionHistoryData.result.length;
   const totalPages = Math.ceil(totalItems / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, totalItems);
-  const currentItems = transactions.result.slice(startIndex, endIndex);
+  const currentItems = transactionHistoryData.result.slice(
+    startIndex,
+    endIndex
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
+  if (!!isFetchingWalletTxns) {
+    return <TableSkeletonLoading columns={columns} />;
+  }
+
   return (
     <div className="space-y-4">
-      <Table className="">
+      <Table className="bg-white dark:bg-[#222222]">
         <TableHeader>
-          <TableRow className="bg-reown-1 hover:bg-reown-1/80 h-16">
+          <TableRow className="h-16 bg-reown-1 hover:bg-reown-1/80 dark:bg-reown-1/20 dark:hover:bg-reown-1/40">
             {columns.map((column) => (
-              <TableHead key={column} className="text-center font-mono">
+              <TableHead
+                key={column}
+                className="min-w-[100px] text-center font-mono dark:text-gray-100"
+              >
                 {column}
               </TableHead>
             ))}
@@ -62,7 +84,7 @@ export default function TransactionHistoryTable() {
         <TableBody>
           {currentItems.map((txn) => (
             <TableRow key={txn.hash} className="text-center">
-              <TableCell>
+              <TableCell className="">
                 <Addreth address={txn.hash as `0x${string}`} actions="copy" />
               </TableCell>
               <TableCell>
@@ -79,7 +101,7 @@ export default function TransactionHistoryTable() {
               </TableCell>
               <TableCell>{txn.block_number}</TableCell>
               <TableCell>
-                <div className="space-y-1 text-end">
+                <div className="mx-auto max-w-[170px] space-y-1 text-start">
                   <div>
                     <Addreth
                       address={txn.from_address as `0x${string}`}
@@ -92,7 +114,8 @@ export default function TransactionHistoryTable() {
                   />
                 </div>
               </TableCell>
-              <TableCell>{formatUnits(BigInt(txn.value), 18)}</TableCell>
+              {/* <TableCell>{formatUnits(BigInt(txn.value), 18)}</TableCell> */}
+              <TableCell>{formatEther(BigInt(txn.value))}</TableCell>
               <TableCell>{txn.transaction_fee}</TableCell>
             </TableRow>
           ))}

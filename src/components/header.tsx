@@ -1,13 +1,18 @@
-import { cn } from '@/lib/utils';
+import Image from 'next/image';
 import Link from 'next/link';
-import { buttonVariants } from './ui/button';
 import { ThemeToggle } from './ui/theme-toggle';
 
 export default function Header() {
   return (
-    <div className="flex items-center justify-between py-4">
-      <Link href={'/'} className={cn(buttonVariants({ variant: 'reown-4' }))}>
-        Address Scanner
+    <div className="z-[1000] flex items-center justify-between pt-6">
+      <Link href={'/'} className={''}>
+        <Image
+          src={'reown.svg'}
+          alt=""
+          width={140}
+          height={100}
+          className="dark:invert"
+        />
       </Link>
       <div>
         <ThemeToggle />

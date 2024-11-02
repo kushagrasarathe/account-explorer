@@ -37,7 +37,7 @@ export default function RootLayout({
         className={cn(
           khTekaRegular.variable,
           khTekaMono.variable,
-          'bg-reown-1/5'
+          'bg-white dark:bg-[#111111]'
         )}
       >
         <ThemeProvider
@@ -47,7 +47,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Provider>
-            <div className="mx-auto flex min-h-screen w-full flex-col px-6 md:max-w-7xl md:gap-y-4">
+            <div className="z-50 mx-auto flex min-h-screen w-full flex-col px-6 md:max-w-7xl md:gap-y-4">
               <Header />
               <div>{children}</div>
             </div>

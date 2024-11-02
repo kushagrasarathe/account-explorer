@@ -27,7 +27,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({ text }) => {
       onClick={handleCopy}
       variant={'ghost'}
       size={'sm'}
-      className="hover:bg-transparent"
+      className="hover:bg-transparent dark:invert"
       aria-label={copied ? 'Copied!' : 'Copy to clipboard'}
     />
   );

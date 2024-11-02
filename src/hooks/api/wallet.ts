@@ -2,12 +2,14 @@ import axios from '@/config/axios';
 import {
   WALLET_NET_WORTH,
   WALLET_STATS,
+  WALLET_TOKEN_HOLDINGS,
   WALLET_TX_HISTORY,
 } from '@/lib/constants';
 import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import {
+  EvmErc20TokenBalanceWithPriceResultJSON,
   EvmNetWorthResultJSON,
   EvmWalletHistoryJSON,
   EvmWalletStatJSON,
@@ -90,6 +92,38 @@ export const useWalletStatsQuery = (address: string, dependsOn = true) => {
   return useQuery({
     queryKey: [WALLET_STATS, address],
     queryFn: fetchWalletStats,
+    onSuccess,
+    onError,
+    retry: 0,
+    cacheTime: 0,
+    enabled: dependsOn,
+  });
+};
+
+export const useWalletTokenHoldingsQuery = (
+  address: string,
+  dependsOn = true
+) => {
+  const { setTokenHoldings } = useExplorerStore();
+
+  const fetchWalletTokenHoldings = async () => {
+    const { data } = await axios.get<EvmErc20TokenBalanceWithPriceResultJSON>(
+      `/wallets/${address}/tokens`
+    );
+    return data;
+  };
+
+  function onSuccess(resp?: EvmErc20TokenBalanceWithPriceResultJSON) {
+    if (!!resp?.result.length) {
+      setTokenHoldings(resp);
+    }
+  }
+
+  function onError(error: AxiosError) {}
+
+  return useQuery({
+    queryKey: [WALLET_TOKEN_HOLDINGS, address],
+    queryFn: fetchWalletTokenHoldings,
     onSuccess,
     onError,
     retry: 0,

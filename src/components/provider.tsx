@@ -10,7 +10,7 @@ function Provider({ children }: React.PropsWithChildren<{}>) {
 
   return (
     <WagmiProvider config={config}>
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
     </WagmiProvider>
   );
 }

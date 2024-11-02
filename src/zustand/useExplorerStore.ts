@@ -1,4 +1,5 @@
 import {
+  EvmErc20TokenBalanceWithPriceResultJSON,
   EvmNetWorthResultJSON,
   EvmWalletHistoryJSON,
   EvmWalletStatJSON,
@@ -17,6 +18,10 @@ interface IExplorerStore {
   setNetWorth: (balance: EvmNetWorthResultJSON) => void;
   walletStats: EvmWalletStatJSON | null;
   setWalletStats: (walletStats: EvmWalletStatJSON) => void;
+  tokenHoldings: EvmErc20TokenBalanceWithPriceResultJSON | null;
+  setTokenHoldings: (
+    tokenHoldings: EvmErc20TokenBalanceWithPriceResultJSON
+  ) => void;
 }
 
 export const useExplorerStore = create<IExplorerStore>((set, get) => ({
@@ -57,6 +62,16 @@ export const useExplorerStore = create<IExplorerStore>((set, get) => ({
     set((state) => ({
       ...state,
       wallettStats: walletStats,
+    }));
+  },
+
+  tokenHoldings: null,
+  setTokenHoldings: (
+    tokenHoldings: EvmErc20TokenBalanceWithPriceResultJSON
+  ) => {
+    set((state) => ({
+      ...state,
+      tokenHoldings: tokenHoldings,
     }));
   },
 }));
