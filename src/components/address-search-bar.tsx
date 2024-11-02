@@ -7,13 +7,13 @@ import {
 } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Avatar from 'boring-avatars';
-import { Loader2, QrCode, Search, X } from 'lucide-react';
+import { Clock, Loader2, QrCode, Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { isAddress } from 'viem';
 import { normalize } from 'viem/ens';
-import { useEnsAddress, useEnsAvatar, useEnsResolver } from 'wagmi';
+import { useEnsAddress, useEnsResolver } from 'wagmi';
 import { z } from 'zod';
 import { ButtonIcon } from './ui/button-icon';
 import { Card, CardContent } from './ui/card';
@@ -28,9 +28,19 @@ const addressSchema = z.object({
 
 type FormData = z.infer<typeof addressSchema>;
 
+type SearchHistoryItem = {
+  address: string;
+  ens?: string;
+  timestamp: number;
+};
+
 export default function AddressSearchBar() {
   const [inputValue, setInputValue] = useState('');
   const [resolvedAddress, setResolvedAddress] = useState<ResolvedAddress>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const form = useForm<FormData>({
     resolver: zodResolver(addressSchema),
@@ -38,6 +48,35 @@ export default function AddressSearchBar() {
   });
 
   const isEnsName = inputValue.endsWith('.eth');
+
+  // fetch search history from localStorage
+  useEffect(() => {
+    try {
+      const history = localStorage.getItem('addressSearchHistory');
+      if (history) {
+        setSearchHistory(JSON.parse(history));
+      }
+    } catch (error) {
+      console.error('Error loading search history:', error);
+    }
+  }, []);
+
+  // close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setShowHistory(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // ENS Resolution hooks
   const { data: ensAddress, isLoading: isLoadingEnsAddress } = useEnsAddress({
@@ -48,11 +87,6 @@ export default function AddressSearchBar() {
   const { data: ensName } = useEnsResolver({
     name: isAddress(inputValue) ? normalize(inputValue) : undefined,
     query: { enabled: isAddress(inputValue) },
-  });
-
-  const { data: ensAvatar } = useEnsAvatar({
-    name: isAddress(inputValue) ? normalize(inputValue) : undefined,
-    chainId: 1,
   });
 
   useEffect(() => {
@@ -69,11 +103,60 @@ export default function AddressSearchBar() {
     const value = e.target.value;
     setInputValue(value);
     form.setValue('address', value, { shouldValidate: true });
+
+    if (value === '') {
+      setShowHistory(true);
+    } else {
+      setShowHistory(false);
+    }
+  };
+
+  const addToSearchHistory = (address: string, ens?: string) => {
+    try {
+      const newItem: SearchHistoryItem = {
+        address,
+        ens,
+        timestamp: Date.now(),
+      };
+
+      const updatedHistory = [newItem, ...searchHistory]
+        .filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.address === item.address)
+        )
+        .slice(0, 5);
+
+      setSearchHistory(updatedHistory);
+      localStorage.setItem(
+        'addressSearchHistory',
+        JSON.stringify(updatedHistory)
+      );
+    } catch (error) {
+      console.error('Error saving to search history:', error);
+    }
   };
 
   const onSubmit = (data: FormData) => {
     if (resolvedAddress) {
-      console.log('Form submitted:', { ...data, resolvedAddress });
+      addToSearchHistory(resolvedAddress.address, resolvedAddress.ens);
+      router.push(`/address/${resolvedAddress.address}`);
+    }
+  };
+
+  const handleHistoryItemClick = (item: SearchHistoryItem) => {
+    setInputValue(item.ens || item.address);
+    form.setValue('address', item.ens || item.address, {
+      shouldValidate: true,
+    });
+    setShowHistory(false);
+    addToSearchHistory(item.address, item.ens);
+    router.push(`/address/${item.address}`);
+  };
+
+  const handleAddressClick = (address: string) => {
+    if (resolvedAddress) {
+      addToSearchHistory(resolvedAddress.address, resolvedAddress.ens);
+      router.push(`/address/${address}`);
     }
   };
 
@@ -81,7 +164,7 @@ export default function AddressSearchBar() {
   const showLoading = isEnsName && !ensAddress && isLoadingEnsAddress;
 
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full space-y-2" ref={containerRef}>
       <header className="space-y-2 px-2">
         <Typography variant={'h4'} className="font-bold">
           Enter ETH address or ENS
@@ -102,35 +185,52 @@ export default function AddressSearchBar() {
                         type="text"
                         value={inputValue}
                         onChange={handleInputChange}
+                        onFocus={() => {
+                          if (!inputValue) {
+                            setShowHistory(true);
+                          }
+                        }}
                         placeholder="e.g: kushagrasarathe.eth"
-                        className="text-reown-foreground dark:text-reown-1 h-12 w-full rounded-full border p-3 pl-10 pr-12 tracking-wide focus:ring-2"
+                        className="h-12 w-full rounded-full border p-3 pl-10 pr-12 tracking-wide text-reown-foreground focus:ring-2 dark:text-reown-1"
                       />
                       <Search
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        className="absolute left-3 top-1/2 text-gray-400 -translate-y-1/2"
                         size={20}
                       />
                       {inputValue && (
                         <ButtonIcon
-                          onClick={() => setInputValue('')}
+                          onClick={() => {
+                            setInputValue('');
+                            setShowHistory(true);
+                          }}
                           variant="ghost"
                           icon={X}
                           type="button"
-                          className="absolute right-14 top-1/2 h-7 -translate-y-1/2 p-0 text-gray-400 hover:bg-white hover:text-gray-600"
+                          className="absolute right-14 top-1/2 h-7 p-0 text-gray-400 -translate-y-1/2 hover:bg-white hover:text-gray-600"
                         />
                       )}
                       <ButtonIcon
                         variant="secondary"
                         icon={QrCode}
                         type="button"
-                        className="absolute right-3 top-1/2 h-7 -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-3 top-1/2 h-7 p-2 text-gray-400 -translate-y-1/2 hover:text-gray-600"
                       />
                       {showDropdown && (
                         <ResolvedAddressDropdown
                           resolvedAddress={resolvedAddress}
                           inputValue={inputValue}
                           isLoading={showLoading}
+                          onAddressClick={handleAddressClick}
                         />
                       )}
+                      {showHistory &&
+                        searchHistory.length > 0 &&
+                        !showDropdown && (
+                          <SearchHistoryDropdown
+                            history={searchHistory}
+                            onItemClick={handleHistoryItemClick}
+                          />
+                        )}
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -144,6 +244,33 @@ export default function AddressSearchBar() {
   );
 }
 
+function SearchHistoryDropdown({
+  history,
+  onItemClick,
+}: {
+  history: SearchHistoryItem[];
+  onItemClick: (item: SearchHistoryItem) => void;
+}) {
+  return (
+    <Card className="absolute top-14 w-full rounded-lg border p-1.5 shadow-lg">
+      <Typography variant="small" className="px-3 py-2 text-gray-500">
+        Recent searches
+      </Typography>
+      {history.map((item) => (
+        <CardContent
+          key={item.address}
+          onClick={() => onItemClick(item)}
+          className="flex cursor-pointer items-center justify-between gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/10"
+        >
+          <AddressCard address={item.address} ens={item.ens} />
+
+          <Clock className="size-4 text-gray-400" />
+        </CardContent>
+      ))}
+    </Card>
+  );
+}
+
 type ResolvedAddress = {
   address: string;
   ens?: string;
@@ -153,16 +280,19 @@ function ResolvedAddressDropdown({
   resolvedAddress,
   inputValue,
   isLoading,
+  onAddressClick,
 }: {
   resolvedAddress: ResolvedAddress;
   inputValue: string;
   isLoading: boolean;
+  onAddressClick: (address: string) => void;
 }) {
-  const router = useRouter();
   return (
     <Card className="absolute top-14 w-full rounded-lg border p-1.5 shadow-lg">
       <CardContent
-        onClick={() => router.push(`/address/${resolvedAddress?.address}`)}
+        onClick={() =>
+          resolvedAddress && onAddressClick(resolvedAddress.address)
+        }
         className="flex cursor-pointer flex-col items-start px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/10"
       >
         {isLoading ? (
@@ -171,33 +301,40 @@ function ResolvedAddressDropdown({
             <Typography variant={'small'}>Resolving ENS name...</Typography>
           </div>
         ) : (
-          <div className="flex items-center gap-3">
-            <Avatar
-              name={(resolvedAddress?.address || inputValue) ?? 'kushagra.eth'}
-              variant="pixel"
-              className="size-10 rounded-full shadow-xl"
-            />
-            <div className="space-y-1">
-              {resolvedAddress?.ens &&
-                resolvedAddress.ens !==
-                  '0x0000000000000000000000000000000000000000' && (
-                  <Typography
-                    variant="small"
-                    className="font-medium text-blue-600 dark:text-violet-300"
-                  >
-                    {resolvedAddress.ens}
-                  </Typography>
-                )}
-              <Typography
-                variant="small"
-                className="block font-mono font-medium tracking-wide text-gray-600 dark:text-gray-300"
-              >
-                {resolvedAddress?.address || inputValue}
-              </Typography>
-            </div>
-          </div>
+          <AddressCard
+            address={(resolvedAddress?.address || inputValue) ?? 'kushagra.eth'}
+            ens={resolvedAddress?.ens}
+          />
         )}
       </CardContent>
     </Card>
   );
 }
+
+const AddressCard = ({ address, ens }: { address: string; ens?: string }) => {
+  return (
+    <div className="flex items-center gap-3">
+      <Avatar
+        name={address ?? 'kushagra.eth'}
+        variant="pixel"
+        className="size-10 rounded-full shadow-xl"
+      />
+      <div className="space-y-1">
+        {ens && ens !== '0x0000000000000000000000000000000000000000' && (
+          <Typography
+            variant="small"
+            className="font-medium text-blue-600 dark:text-violet-300"
+          >
+            {ens}
+          </Typography>
+        )}
+        <Typography
+          variant="small"
+          className="block font-mono font-medium tracking-wide text-gray-600 dark:text-gray-300"
+        >
+          {address}
+        </Typography>
+      </div>
+    </div>
+  );
+};
