@@ -4,7 +4,6 @@ import {
   useWalletNetWorthQuery,
   useWalletStatsQuery,
 } from '@/hooks/api/wallet';
-// import { netWorthData, statsData } from '@/lib/mock-data';
 import { formatAddress, formatNumber } from '@/lib/utils';
 import { useExplorerStore } from '@/zustand/useExplorerStore';
 import { CopyToClipboard } from './copy-to-clipboard';
@@ -17,15 +16,19 @@ export default function WalletStats() {
   return (
     <>
       <div className="w-full space-y-3">
-        <Typography variant={'h3'}>Account Stats</Typography>
-        <div className="flex flex-col items-stretch justify-center gap-5 md:flex-row md:gap-10">
-          <Stats />
-          <QrCodeGenerator
-            nftsOwned={walletStats?.nfts || '---'}
-            totalTransactions={walletStats?.transactions.total || '---'}
-            netWorth={walletNetWorth?.total_networth_usd as string}
-          />
+        <div className="flex items-center justify-between">
+          <div>
+            <Typography variant={'h3'}>Account Stats</Typography>
+          </div>
+          <div className="">
+            <QrCodeGenerator
+              nftsOwned={walletStats?.nfts || '---'}
+              totalTransactions={walletStats?.transactions.total || '---'}
+              netWorth={walletNetWorth?.total_networth_usd as string}
+            />
+          </div>
         </div>
+        <Stats />
       </div>
     </>
   );

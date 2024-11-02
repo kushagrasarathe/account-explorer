@@ -42,37 +42,26 @@ function QrCodeGenerator({
 
   return (
     <div className="w-full space-y-4 md:w-fit">
-      <div className="space-y-4">
-        <Card className="rounded-2xl bg-reown-1 p-4 shadow-xl dark:bg-[#222222] lg:size-fit">
-          <QRCode
-            value={getCurrentURL()}
-            className="size-full dark:invert lg:size-40"
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
+          <ButtonIcon icon={Share2} variant={'ghost'} className="w-full" />
+        </DialogTrigger>
+        <DialogContent className="z-[10000] sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Share Address</DialogTitle>
+            <DialogDescription>
+              Download a shareable image with address details
+            </DialogDescription>
+          </DialogHeader>
+
+          <ShareableCard
+            address={address as string}
+            nftsOwned={nftsOwned}
+            netWorth={netWorth}
+            totalTransactions={totalTransactions}
           />
-        </Card>
-
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <ButtonIcon icon={Share2} variant={'reown-3'} className="w-full">
-              Share
-            </ButtonIcon>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Share Address</DialogTitle>
-              <DialogDescription>
-                Download a shareable image with address details
-              </DialogDescription>
-            </DialogHeader>
-
-            <ShareableCard
-              address={address as string}
-              nftsOwned={nftsOwned}
-              netWorth={netWorth}
-              totalTransactions={totalTransactions}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
